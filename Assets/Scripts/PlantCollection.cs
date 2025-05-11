@@ -6,14 +6,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class PlantCollection : MonoBehaviour
 {
+    [SerializeReference]
     public List<Plant> plants=new List<Plant>();
     void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
     {
         
     }

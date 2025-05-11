@@ -33,9 +33,9 @@ public class PlantGraph : MonoBehaviour
             nodes.Add(new Node(p,t));
             t++;
         }
-        for(int i=0;i<n;i++)
+        for(int i=0;i<n;i++)//for plant nodes[i].plant
         {
-            for(int j=0;j<n;j++)
+            for(int j=0;j<n;j++)//for plant nodes[j].plant
             {
                 if(i==j)
                 {
@@ -46,15 +46,16 @@ public class PlantGraph : MonoBehaviour
                 else
                 if(nodes[i].plant.veciniBuni.Exists(x=>x.name==nodes[j].plant.name))//plant j is good for i
                 {
+                    int index=nodes[i].plant.veciniBuni.FindIndex(x=>x.name==nodes[j].plant.name);
                     nodes[i].neighbors.Add(nodes[j]);
-                    nodes[i].costs.Add(1);
+                    nodes[i].costs.Add(nodes[i].plant.friendshipValue[index]);//good factor
 
                     //nodes[j].neighbors.Add(nodes[i]);
                     //nodes[j].costs.Add(2);
 
-                    maxPossibleScore+=1;
+                    maxPossibleScore+=nodes[i].plant.friendshipValue[index];
                 }
-                else //neutru
+                else //neutral
                 if(!nodes[i].plant.veciniRai.Exists(x=>x.name==nodes[j].plant.name))//they are neither bad nor good
                 {
                     //if the plants are the same, I considered them to be in this case

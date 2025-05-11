@@ -11,10 +11,11 @@ public class GameManager : MonoBehaviour
     public List<Plant> allPlants=new List<Plant>();
     public Dictionary<string,Plant> dict=new Dictionary<string,Plant>();
     public List<Plant> goodVList=new List<Plant>();
+    public List<int> friendshipValues=new List<int>();
     public List<Plant> badVList=new List<Plant>();
     public List<Plant> selectedPlants=new List<Plant>();
     public int selectingState=0;
-    public GameObject contentViewListMultiple,elementPrefab,elementMultiplePrefab;
+    public GameObject contentViewListMultiple,elementPrefab,elementAddWithFactorPrefab,elementMultiplePrefab;
     public GameObject contentViewListAdd,contentViewListRemove;
     public GameObject contentViewListSol,elementSolPrefab;
     public List<GameObject> panels=new List<GameObject>();
@@ -88,8 +89,6 @@ public class GameManager : MonoBehaviour
         timeSearchedText.text="";
         showListToChooseInMultiple();
         //selectingState=2;
-
-        //changeSelectingState(2);
     }
     public List<string> ansForOrder;
     bool searchingPlants=false;
@@ -117,6 +116,17 @@ public class GameManager : MonoBehaviour
         scrollSol.SetActive(false);
 
     }
+    // public void showGoodPlantsInAdd()
+    // {
+    //     addGoodText.SetActive(false);
+    //     addBadText.SetActive(false);
+    //     addNextButton.SetActive(false);
+    //     addBackButton.SetActive(false);
+    //     addFinishButton.SetActive(false);
+    // }
+    
+
+    //this is used only in "add plant"
     public void changeSelectingState(int k)
     {
         addGoodText.SetActive(false);
@@ -124,19 +134,20 @@ public class GameManager : MonoBehaviour
         addNextButton.SetActive(false);
         addBackButton.SetActive(false);
         addFinishButton.SetActive(false);
-        if(k==1)
+        if(k==1)//select good plants
         {
             selectingState=k;
-            showListToChoose(1,contentViewListAdd);
+            //show the multiple way variant
+            showListToChoose(1,elementAddWithFactorPrefab,contentViewListAdd);
             addGoodText.SetActive(true);
 
             addNextButton.SetActive(true);
         }
         else
-        if(k==-1)
+        if(k==-1)//select bad plants
         {
             selectingState=k;
-            showListToChoose(-1,contentViewListAdd);
+            showListToChoose(-1,elementPrefab,contentViewListAdd);
             addBadText.SetActive(true);
 
             addBackButton.SetActive(true);
@@ -145,7 +156,17 @@ public class GameManager : MonoBehaviour
     }
     public void finishAddingPlant()
     {
-        Plant p=new Plant(inputName.text,new List<Plant>(goodVList),new List<Plant>(badVList));
+        if(inputName.text=="")
+        {
+            //error, name must not be empty! Do not add the plant.
+            goodVList.Clear();
+            badVList.Clear();
+            friendshipValues.Clear();
+            selectingState=0;
+            moveToPanel(0);
+            return;
+        }
+        Plant p=new Plant(inputName.text,new List<Plant>(goodVList),new List<int>(friendshipValues),new List<Plant>(badVList));
         allPlants.Add(p);
         dict[p.name]=p;
         //for every plant in badVlist, mark this plant p as bad neighbor
@@ -161,6 +182,7 @@ public class GameManager : MonoBehaviour
         }
         goodVList.Clear();
         badVList.Clear();
+        friendshipValues.Clear();
         selectingState=0;
         //scrollView.SetActive(false);
         moveToPanel(0);
@@ -196,6 +218,30 @@ public class GameManager : MonoBehaviour
                 badVList.Add(dict[name]);
         }
     }
+    public void selectPlant(string name,int factor)//used in add panel
+    {
+        if(selectingState==1)//select for good list
+        {
+            int i=goodVList.FindIndex(x=>x.name==name);
+            if(i==-1)
+            {
+                goodVList.Add(dict[name]);
+                friendshipValues.Add(factor);
+            }
+            else
+            {
+                //update
+                friendshipValues[i]=factor;
+            }
+        }
+        else //we would never reach this part
+        if(selectingState==-1)//select for bad list
+        {
+            if(!badVList.Exists(x=>x.name==name))
+                badVList.Add(dict[name]);
+            Debug.Log("error in selectPlant with factor!");
+        }
+    }
     public void deselectPlant(string name)
     {
         if(selectingState==1)
@@ -208,6 +254,25 @@ public class GameManager : MonoBehaviour
         {
             if(badVList.Exists(x=>x.name==name))
                 badVList.Remove(dict[name]);
+        }
+    }
+    public void deselectPlant(string name,int factor)
+    {
+        if(selectingState==1)
+        {
+            if(goodVList.Exists(x=>x.name==name))
+            {
+                int i=goodVList.IndexOf(dict[name]);
+                friendshipValues.RemoveAt(i);
+                goodVList.Remove(dict[name]);
+            }
+        }
+        else
+        if(selectingState==-1)
+        {
+            if(badVList.Exists(x=>x.name==name))
+                badVList.Remove(dict[name]);
+            Debug.Log("error in deselectPlant with factor!");
         }
     }
     public void selectPlantMultiple(string name)
@@ -230,7 +295,7 @@ public class GameManager : MonoBehaviour
         badVList.Clear();
         moveToPanel(3);
         selectingState=-1;//-1 means we will select into badList
-        showListToChoose(-1,contentViewListRemove);
+        showListToChoose(-1,elementPrefab,contentViewListRemove);
 
     }
     public void clearGoodBadLists()
@@ -260,21 +325,35 @@ public class GameManager : MonoBehaviour
         dict.Remove(p.name);
         //save allPlants
     }
-    public void showListToChoose(int k,GameObject contentViewList) //when selecting plants
+    public void showListToChoose(int k,GameObject rowPrefab,GameObject contentViewList) //when selecting plants
     {
         foreach(Transform c in contentViewList.transform)
             Destroy(c.gameObject);
         foreach(Plant p in allPlants)
         {
-            GameObject g=Instantiate(elementPrefab,contentViewList.transform);
+            GameObject g=Instantiate(rowPrefab,contentViewList.transform);
             ElementScript el=g.GetComponent<ElementScript>();
             el.textName.text=p.name;
             el.gameManager=this;
+            int factor=0;
+            if(el.hasFactor)//only for good neighbors
+            {
+                int i=goodVList.IndexOf(dict[el.textName.text]);
+                if(i!=-1)
+                    factor=friendshipValues[i];
+                else
+                    Debug.Log("ERROR in showListToChoose");
+            }
             g.SetActive(true);
             if(k==1)//show good neighbors as selected
             {
                 if(goodVList.Exists(x=>x.name==p.name))
-                    el.bifat(true);
+                {
+                    if(el.hasFactor)
+                        el.bifat(factor,true);
+                    else
+                        el.bifat(true);
+                }
                 //if it is in the other list
                 if(badVList.Exists(x=>x.name==p.name))//mark the button as disabled
                     g.GetComponent<Button>().interactable=false;
