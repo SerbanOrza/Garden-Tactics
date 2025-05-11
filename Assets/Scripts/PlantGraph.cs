@@ -22,7 +22,7 @@ public class PlantGraph : MonoBehaviour
     {
         
     }
-    public void createNodes(List<Plant> plants)
+    public void createNodes(List<Plant> plants)//plants can be repeated
     {
         nodes=new List<Node>();
         n=plants.Count;
@@ -44,19 +44,19 @@ public class PlantGraph : MonoBehaviour
 
                 }
                 else
-                if(nodes[i].plant.veciniBuni.Exists(x=>x.name==nodes[j].plant.name))//plant j is good for i
+                if(nodes[i].plant.veciniBuni.Exists(x=>x==nodes[j].plant.name))//plant j is good for i
                 {
-                    int index=nodes[i].plant.veciniBuni.FindIndex(x=>x.name==nodes[j].plant.name);
+                    int index=nodes[i].plant.veciniBuni.FindIndex(x=>x==nodes[j].plant.name);
                     nodes[i].neighbors.Add(nodes[j]);
-                    nodes[i].costs.Add(nodes[i].plant.friendshipValue[index]);//good factor
+                    nodes[i].costs.Add(nodes[i].plant.friendshipValues[index]);//good factor
 
                     //nodes[j].neighbors.Add(nodes[i]);
                     //nodes[j].costs.Add(2);
 
-                    maxPossibleScore+=nodes[i].plant.friendshipValue[index];
+                    maxPossibleScore+=nodes[i].plant.friendshipValues[index];
                 }
-                else //neutral
-                if(!nodes[i].plant.veciniRai.Exists(x=>x.name==nodes[j].plant.name))//they are neither bad nor good
+                else //neutral or if they have the same name
+                if(!nodes[i].plant.veciniRai.Exists(x=>x==nodes[j].plant.name))//they are neither bad nor good
                 {
                     //if the plants are the same, I considered them to be in this case
                     nodes[i].neighbors.Add(nodes[j]);

@@ -36,19 +36,22 @@ public class GameManager : MonoBehaviour
         Plant p4=new Plant("Rosii negre");
         Plant p5=new Plant("Vinete albe");
         Plant p6=new Plant("Morcovi");
-        p3.veciniRai.Add(p4);
-        p3.veciniRai.Add(p5);
-        p3.veciniRai.Add(p6);
+        p3.veciniRai.Add(p4.name);
+        p3.veciniRai.Add(p5.name);
+        p3.veciniRai.Add(p6.name);
 
-        p4.veciniRai.Add(p3);
-        p5.veciniRai.Add(p3);
-        p6.veciniRai.Add(p3);
+        p4.veciniRai.Add(p3.name);
+        p5.veciniRai.Add(p3.name);
+        p6.veciniRai.Add(p3.name);
 
-        p1.veciniRai.Add(p2);
-        p2.veciniRai.Add(p1);
+        p1.veciniRai.Add(p2.name);
+        p2.veciniRai.Add(p1.name);
 
-        p4.veciniBuni.Add(p6);
-        p6.veciniBuni.Add(p4);
+        p4.veciniBuni.Add(p6.name);
+        p4.friendshipValues.Add(1);
+        
+        p6.veciniBuni.Add(p4.name);
+        p6.friendshipValues.Add(1);
 
         List<Plant> list=new List<Plant>();
         allPlants.Add(p1);
@@ -116,15 +119,6 @@ public class GameManager : MonoBehaviour
         scrollSol.SetActive(false);
 
     }
-    // public void showGoodPlantsInAdd()
-    // {
-    //     addGoodText.SetActive(false);
-    //     addBadText.SetActive(false);
-    //     addNextButton.SetActive(false);
-    //     addBackButton.SetActive(false);
-    //     addFinishButton.SetActive(false);
-    // }
-    
 
     //this is used only in "add plant"
     public void changeSelectingState(int k)
@@ -164,21 +158,27 @@ public class GameManager : MonoBehaviour
             friendshipValues.Clear();
             selectingState=0;
             moveToPanel(0);
+            Debug.Log("empty name not allowed!");
             return;
         }
         Plant p=new Plant(inputName.text,new List<Plant>(goodVList),new List<int>(friendshipValues),new List<Plant>(badVList));
         allPlants.Add(p);
         dict[p.name]=p;
-        //for every plant in badVlist, mark this plant p as bad neighbor
+        //for every plant v in goodVList, mark our plant p to be good for v.
         foreach(Plant v in goodVList)
         {
-            if(!v.veciniBuni.Exists(x=>x.name==p.name))
-                v.veciniBuni.Add(p);
+            if(!v.veciniBuni.Exists(x=>x==p.name))//if not already there
+            {
+                v.veciniBuni.Add(p.name);
+                int index=goodVList.FindIndex(x=>x.name==v.name);
+                v.friendshipValues.Add(friendshipValues[index]);
+            }
         }
+        //for every plant in badVlist, mark this plant p as bad neighbor
         foreach(Plant v in badVList)
         {
-            if(!v.veciniRai.Exists(x=>x.name==p.name))
-                v.veciniRai.Add(p);
+            if(!v.veciniRai.Exists(x=>x==p.name))//if not already there
+                v.veciniRai.Add(p.name);
         }
         goodVList.Clear();
         badVList.Clear();
@@ -315,12 +315,22 @@ public class GameManager : MonoBehaviour
         if(dict.ContainsKey(name)==false)
             return;
         Plant p=dict[name];
-        foreach(Plant a in p.veciniBuni)
-            if(a.veciniBuni.Exists(x=>x.name==p.name))
-                a.veciniBuni.Remove(p);
-        foreach(Plant a in p.veciniRai)
-            if(a.veciniRai.Exists(x=>x.name==p.name))
-                a.veciniRai.Remove(p);
+        foreach(string a in p.veciniBuni)
+        {
+            Plant pa=dict[a];
+            if(pa.veciniBuni.Exists(x=>x==p.name))
+            {
+                int i=pa.veciniBuni.IndexOf(p.name);
+                pa.friendshipValues.RemoveAt(i);
+                pa.veciniBuni.Remove(p.name);
+            }
+        }
+        foreach(string a in p.veciniRai)
+        {
+            Plant pa=dict[a];
+            if(pa.veciniRai.Exists(x=>x==p.name))
+                pa.veciniRai.Remove(p.name);
+        }
         allPlants.Remove(p);
         dict.Remove(p.name);
         //save allPlants
@@ -396,10 +406,10 @@ public class GameManager : MonoBehaviour
             el.countText.text=i.ToString()+")";
             //we are on plant i-1 in ansForOrder
             
-            if(i-2>=0 && dict[p].veciniBuni.Exists(x=>x.name==ansForOrder[i-2])) 
+            if(i-2>=0 && dict[p].veciniBuni.Exists(x=>x==ansForOrder[i-2])) 
                 g.GetComponent<Image>().color=greenColor;
             else
-            if(i<ansForOrder.Count && dict[p].veciniBuni.Exists(x=>x.name==ansForOrder[i]))
+            if(i<ansForOrder.Count && dict[p].veciniBuni.Exists(x=>x==ansForOrder[i]))
                 g.GetComponent<Image>().color=greenColor;
             el.gameManager=this;
             g.SetActive(true);
