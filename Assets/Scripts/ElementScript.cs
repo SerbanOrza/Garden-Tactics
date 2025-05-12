@@ -13,8 +13,9 @@ public class ElementScript : MonoBehaviour
     public TMP_Text countText;
     public bool hasFactor=false;
     public int nr=0;
+    public string plantName;
     //public GameObject plusButton,minusButton;
-    void Start()
+    void Awake()
     {
         nr=0;
         if(state==false && bifa!=null)
@@ -31,6 +32,7 @@ public class ElementScript : MonoBehaviour
     public void bifat(int nr,bool state)//is used when created
     {
         this.nr=nr;
+        Debug.Log("bifat "+nr+" "+plantName);
         this.state=state;
         countText.text=nr.ToString();
         bifa.SetActive(state);
@@ -64,6 +66,20 @@ public class ElementScript : MonoBehaviour
         else
         {
             gameManager.deselectPlant(textName.text);
+            bifa.SetActive(false);
+        }
+        state=!state;
+    }
+    public void pressAndHaveOnlyThisPlant()
+    {
+        if(state==false)
+        {
+            gameManager.selectOnlyThisPlant(textName.text);
+            bifa.SetActive(true);
+        }
+        else
+        {
+            gameManager.deselectThisPlant(textName.text);
             bifa.SetActive(false);
         }
         state=!state;

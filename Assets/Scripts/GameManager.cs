@@ -15,19 +15,20 @@ public class GameManager : MonoBehaviour
     public List<Plant> badVList=new List<Plant>();
     public List<Plant> selectedPlants=new List<Plant>();
     public int selectingState=0;
-    public GameObject contentViewListMultiple,elementPrefab,elementAddWithFactorPrefab,elementMultiplePrefab;
+    public GameObject contentViewListMultiple,elementPrefab,elementAddWithFactorPrefab,elementMultiplePrefab,elementToEditPrefab;
     public GameObject contentViewListAdd,contentViewListRemove;
     public GameObject contentViewListSol,elementSolPrefab;
-    public GameObject contentShowPlants;
+    public GameObject contentShowPlants,contentEditPlants;
     public List<GameObject> panels=new List<GameObject>();
     public GameObject currentPanel;
     public PlantGraph plantGraph;
     //texts
     public GameObject addGoodText,addBadText;
     public GameObject addBackButton,addNextButton,addFinishButton,addOrderButton,tryAgainButton;
+    public GameObject editButtonInEdit,saveButtonInEdit,nextInEdit,previousInEdit;
     public GameObject scrollMultiple,scrollSol;
     public TMP_InputField inputName;
-    public TMP_Text plantsSelectedText,ansText,timeSearchedText;
+    public TMP_Text plantsSelectedText,ansText,timeSearchedText,whatPlantToEditText;
     public Color greenColor,redColor;
     void Start()
     {
@@ -102,6 +103,18 @@ public class GameManager : MonoBehaviour
         moveToPanel(4);
         showThesePlants(convertToNames(allPlants),elementSolPrefab,contentShowPlants);
     }
+    public void showEditPlantMenu()
+    {
+        moveToPanel(5);
+        editButtonInEdit.SetActive(true);
+
+        nextInEdit.SetActive(false);
+        previousInEdit.SetActive(false);
+        saveButtonInEdit.SetActive(false);
+        whatPlantToEditText.text="What plant do you want to edit?";
+        plantName="";
+        showThesePlants(convertToNames(allPlants),elementToEditPrefab,contentEditPlants);
+    }
     public List<string> ansForOrder;
     bool searchingPlants=false;
     public async void orderPlants()
@@ -128,7 +141,34 @@ public class GameManager : MonoBehaviour
         scrollSol.SetActive(false);
 
     }
+    //this is only used in edit
+    public void changeSelectingStateInEdit(int k)
+    {
+        // addGoodText.SetActive(false);
+        // addBadText.SetActive(false);
+        nextInEdit.SetActive(false);
+        previousInEdit.SetActive(false);
+        saveButtonInEdit.SetActive(false);
+        if(k==1)//select good plants
+        {
+            selectingState=k;
+            //show the multiple way variant
+            showListToChoose(1,elementAddWithFactorPrefab,contentEditPlants,plantName);
+            // addGoodText.SetActive(true);
 
+            nextInEdit.SetActive(true);
+        }
+        else
+        if(k==-1)//select bad plants
+        {
+            selectingState=k;
+            showListToChoose(-1,elementPrefab,contentEditPlants,plantName);
+            // addBadText.SetActive(true);
+
+            previousInEdit.SetActive(true);
+            saveButtonInEdit.SetActive(true);
+        }
+    }
     //this is used only in "add plant"
     public void changeSelectingState(int k)
     {
@@ -223,6 +263,99 @@ public class GameManager : MonoBehaviour
         currentPanel.SetActive(false);
         currentPanel=panels[k];
         currentPanel.SetActive(true);
+    }
+    string plantName;
+    public void continueToEdit()
+    {
+        //we edit the first plant that is in goodVList. (It should be exactly one plant)
+        if(goodVList.Count!=1)
+            return;
+        editButtonInEdit.SetActive(false);
+        // saveButtonInEdit.SetActive(true);
+        plantName=goodVList[0].name;
+        string ourPlant=goodVList[0].name;
+        Plant plant=dict[ourPlant];
+        whatPlantToEditText.text="You are editing plant: "+ourPlant;
+        //prepare the lists
+        clearGoodBadLists();
+        foreach(string p in plant.veciniBuni)
+            goodVList.Add(dict[p]);
+        friendshipValues=new List<int>(plant.friendshipValues);
+        foreach(string p in plant.veciniRai)
+            badVList.Add(dict[p]);
+        //show them
+        changeSelectingStateInEdit(1);
+    }
+    public void finishingEditingPlant()
+    {
+        //oldPlant is connected with all our plants.
+        //We want to remove the connections and to update them with newPlant
+        string ourPlant=plantName;
+        Plant oldPlant=dict[ourPlant];
+
+        Plant newPlant=new Plant(ourPlant,new List<Plant>(goodVList),new List<int>(friendshipValues),new List<Plant>(badVList));
+
+        //remove old connections
+        foreach(string pname in oldPlant.veciniBuni)
+        {
+            Plant v=dict[pname];
+            int index=v.veciniBuni.FindIndex(x=>x==ourPlant);
+            v.veciniBuni.RemoveAt(index);
+            v.friendshipValues.RemoveAt(index);
+        }
+        foreach(string pname in oldPlant.veciniRai)
+        {
+            Plant v=dict[pname];
+            int index=v.veciniRai.FindIndex(x=>x==ourPlant);
+            v.veciniRai.RemoveAt(index);
+        }
+
+        //update allPlants and dict
+        int i=allPlants.FindIndex(x=>x.name==ourPlant);
+        allPlants[i]=newPlant;
+        dict[ourPlant]=newPlant;
+
+
+        //update connections with all other plants
+        //for every plant v in goodVList, mark our plant to be good for v.
+        foreach(Plant v in goodVList)
+        {
+            if(!v.veciniBuni.Exists(x=>x==newPlant.name))//if not already there
+            {
+                v.veciniBuni.Add(newPlant.name);
+                int index=goodVList.FindIndex(x=>x.name==v.name);
+                v.friendshipValues.Add(friendshipValues[index]);
+            }
+        }
+        //for every plant in badVlist, mark this plant as bad neighbor
+        foreach(Plant v in badVList)
+        {
+            if(!v.veciniRai.Exists(x=>x==newPlant.name))//if not already there
+                v.veciniRai.Add(newPlant.name);
+        }
+        clearGoodBadLists();
+        selectingState=0;
+        plantName="";
+        //finished!
+        moveToPanel(0);
+    }
+    public void selectOnlyThisPlant(string name)//in goodVList
+    {
+        //if(goodVList.get(0).name!=name)
+        //show the element prefab for it as unselected
+        foreach(Transform p in contentEditPlants.transform)
+        {
+            ElementScript el=p.gameObject.GetComponent<ElementScript>();
+            if(el.plantName!=name)
+                el.bifat(false);
+        }
+        goodVList.Clear();
+        goodVList.Add(dict[name]);
+    }
+    public void deselectThisPlant(string name)
+    {
+        if(goodVList.Exists(x=>x.name==name))
+            goodVList.Remove(dict[name]);
     }
     public void selectPlant(string name)
     {
@@ -356,15 +489,19 @@ public class GameManager : MonoBehaviour
         dict.Remove(p.name);
         //save allPlants
     }
-    public void showListToChoose(int k,GameObject rowPrefab,GameObject contentViewList) //when selecting plants
+    //based on goodVlist and badVList
+    public void showListToChoose(int k,GameObject rowPrefab,GameObject contentViewList,string exceptionName="") //when selecting plants
     {
         foreach(Transform c in contentViewList.transform)
             Destroy(c.gameObject);
         foreach(Plant p in allPlants)
         {
+            if(p.name==exceptionName)//to not be able to add the same plant name as good or bad for itself when editing
+                continue;
             GameObject g=Instantiate(rowPrefab,contentViewList.transform);
             ElementScript el=g.GetComponent<ElementScript>();
             el.textName.text=p.name;
+            el.plantName=p.name;
             el.gameManager=this;
             int factor=0;
             if(el.hasFactor)//only for good neighbors
@@ -372,8 +509,10 @@ public class GameManager : MonoBehaviour
                 int i=goodVList.IndexOf(dict[el.textName.text]);
                 if(i!=-1)
                     factor=friendshipValues[i];
+                Debug.Log(i+" "+p.name+" "+factor);
                 //else it means it is not checked to the factor is 0
             }
+            //el.nr=factor;
             g.SetActive(true);
             if(k==1)//show good neighbors as selected
             {
@@ -408,6 +547,7 @@ public class GameManager : MonoBehaviour
             GameObject g=Instantiate(elementMultiplePrefab,contentViewListMultiple.transform);
             ElementScript el=g.GetComponent<ElementScript>();
             el.textName.text=p.name;
+            el.plantName=p.name;
             el.gameManager=this;
             g.SetActive(true);
         }
@@ -425,7 +565,9 @@ public class GameManager : MonoBehaviour
             GameObject g=Instantiate(elementPrefab,whichContainer.transform);
             ElementScript el=g.GetComponent<ElementScript>();
             el.textName.text=p;
-            el.countText.text=i.ToString()+")";
+            el.plantName=p;
+            if(el.countText!=null)
+                el.countText.text=i.ToString()+")";
             //we are on plant i-1 in ansForOrder
             el.gameManager=this;
             g.SetActive(true);
@@ -443,6 +585,7 @@ public class GameManager : MonoBehaviour
             GameObject g=Instantiate(elementSolPrefab,contentViewListSol.transform);
             ElementScript el=g.GetComponent<ElementScript>();
             el.textName.text=p;
+            el.plantName=p;
             el.countText.text=i.ToString()+")";
             //we are on plant i-1 in ansForOrder
             
