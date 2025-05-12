@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameObject contentViewListMultiple,elementPrefab,elementAddWithFactorPrefab,elementMultiplePrefab;
     public GameObject contentViewListAdd,contentViewListRemove;
     public GameObject contentViewListSol,elementSolPrefab;
+    public GameObject contentShowPlants;
     public List<GameObject> panels=new List<GameObject>();
     public GameObject currentPanel;
     public PlantGraph plantGraph;
@@ -71,6 +72,9 @@ public class GameManager : MonoBehaviour
             g.SetActive(false);
         moveToPanel(0);
     }
+    /***
+        This function shows the add menu to the screen and prepares the menu to add a new plant.
+    ***/
     public void showAddMenu()
     {
         moveToPanel(1);
@@ -92,6 +96,11 @@ public class GameManager : MonoBehaviour
         timeSearchedText.text="";
         showListToChooseInMultiple();
         //selectingState=2;
+    }
+    public void showAllPlantsMenu()
+    {
+        moveToPanel(4);
+        showThesePlants(convertToNames(allPlants),elementSolPrefab,contentShowPlants);
     }
     public List<string> ansForOrder;
     bool searchingPlants=false;
@@ -153,12 +162,18 @@ public class GameManager : MonoBehaviour
         if(inputName.text=="")
         {
             //error, name must not be empty! Do not add the plant.
-            goodVList.Clear();
-            badVList.Clear();
-            friendshipValues.Clear();
+            clearGoodBadLists();
             selectingState=0;
             moveToPanel(0);
             Debug.Log("empty name not allowed!");
+            return;
+        }
+        if(dict.ContainsKey(inputName.text))//already a plant with this name
+        {
+            clearGoodBadLists();
+            selectingState=0;
+            moveToPanel(0);
+            Debug.Log("same name not allowed!");
             return;
         }
         Plant p=new Plant(inputName.text,new List<Plant>(goodVList),new List<int>(friendshipValues),new List<Plant>(badVList));
@@ -180,9 +195,7 @@ public class GameManager : MonoBehaviour
             if(!v.veciniRai.Exists(x=>x==p.name))//if not already there
                 v.veciniRai.Add(p.name);
         }
-        goodVList.Clear();
-        badVList.Clear();
-        friendshipValues.Clear();
+        clearGoodBadLists();
         selectingState=0;
         //scrollView.SetActive(false);
         moveToPanel(0);
@@ -191,6 +204,13 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+    public List<string> convertToNames(List<Plant>plants)
+    {
+        List<string> ans=new List<string>();
+        foreach(Plant p in plants)
+            ans.Add(p.name);
+        return ans;
     }
     public void exitApp()
     {
@@ -302,6 +322,7 @@ public class GameManager : MonoBehaviour
     {
         goodVList.Clear();
         badVList.Clear();
+        friendshipValues.Clear();
     }
     public void pressDeletePlants()
     {
@@ -351,8 +372,7 @@ public class GameManager : MonoBehaviour
                 int i=goodVList.IndexOf(dict[el.textName.text]);
                 if(i!=-1)
                     factor=friendshipValues[i];
-                else
-                    Debug.Log("ERROR in showListToChoose");
+                //else it means it is not checked to the factor is 0
             }
             g.SetActive(true);
             if(k==1)//show good neighbors as selected
@@ -392,7 +412,27 @@ public class GameManager : MonoBehaviour
             g.SetActive(true);
         }
     }
-    public void showFinalOrderList() //answers
+    /***
+        This methods puts the plant names in the chosen container.
+    ***/
+    public void showThesePlants(List<string> plantsNames,GameObject elementPrefab,GameObject whichContainer)
+    {
+        foreach(Transform c in whichContainer.transform)
+            Destroy(c.gameObject);
+        int i=1;
+        foreach(string p in plantsNames)
+        {
+            GameObject g=Instantiate(elementPrefab,whichContainer.transform);
+            ElementScript el=g.GetComponent<ElementScript>();
+            el.textName.text=p;
+            el.countText.text=i.ToString()+")";
+            //we are on plant i-1 in ansForOrder
+            el.gameManager=this;
+            g.SetActive(true);
+            i++;
+        }
+    }
+    public void showFinalOrderList() //answers. A method that shows what is in
     {
         foreach(Transform c in contentViewListSol.transform)
             Destroy(c.gameObject);
