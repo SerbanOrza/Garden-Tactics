@@ -56,12 +56,12 @@ public class GameManager : MonoBehaviour
         p6.friendshipValues.Add(1);
 
         List<Plant> list=new List<Plant>();
-        allPlants.Add(p1);
-        allPlants.Add(p2);
-        allPlants.Add(p3);
-        allPlants.Add(p4);
-        allPlants.Add(p5);
-        allPlants.Add(p6);
+        // allPlants.Add(p1);
+        // allPlants.Add(p2);
+        // allPlants.Add(p3);
+        // allPlants.Add(p4);
+        // allPlants.Add(p5);
+        // allPlants.Add(p6);
         //allPlants=list;
        // allPlants.plants=list;
         

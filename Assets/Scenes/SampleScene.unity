@@ -2746,9 +2746,9 @@ RectTransform:
   m_Father: {fileID: 1769570508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: -17}
+  m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &403154747
 MonoBehaviour:
@@ -3462,7 +3462,7 @@ RectTransform:
   m_Father: {fileID: 1446699304}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3716,7 +3716,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 3}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &513290495
 GameObject:
@@ -4170,7 +4170,241 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b6c1d5cef5376242a95f15e5ca717aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allPlants: []
+  allPlants:
+  - name: Ardei Capia
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Varza
+  - name: Varza
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Ardei Capia
+  - name: Rosii mici
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Rosii negre
+    - Vinete albe
+    - Morcovi
+  - name: Rosii negre
+    veciniBuni:
+    - Morcovi
+    friendshipValues: 01000000
+    veciniRai:
+    - Rosii mici
+  - name: Vinete albe
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Rosii mici
+  - name: Morcovi
+    veciniBuni:
+    - Rosii negre
+    friendshipValues: 01000000
+    veciniRai:
+    - Rosii mici
+  - name: Basil
+    veciniBuni:
+    - Oregano
+    - Sage
+    - Peppers
+    - Thyme
+    - Tomatoes
+    friendshipValues: 0200000001000000020000000100000002000000
+    veciniRai: []
+  - name: Beans
+    veciniBuni:
+    - Carrots
+    - Cauliflower
+    - Corn
+    - Cucumber
+    - Peas
+    - Rosemary
+    - Sage
+    - Strawberry
+    - Swiss Chard
+    - Thyme
+    - Tomatoes
+    - Broccoli
+    friendshipValues: 020000000200000002000000020000000200000002000000010000000200000002000000010000000200000002000000
+    veciniRai:
+    - Chives
+    - Garlic
+    - Leeks
+    - Marigold
+    - Onion
+    - Peppers
+  - name: Broccoli
+    veciniBuni:
+    - Beans
+    - Carrots
+    - Chives
+    - Cucumber
+    - Dill
+    - Garlic
+    - Lettuce
+    - Nasturtium
+    - Onion
+    - Oregano
+    - Rosemary
+    - Sage
+    - Spinach
+    - Swiss Chard
+    - Thyme
+    friendshipValues: 020000000200000002000000020000000200000002000000020000000200000002000000030000000200000001000000020000000200000002000000
+    veciniRai:
+    - Peppers
+    - Strawberry
+    - Tomatoes
+  - name: Carrots
+    veciniBuni:
+    - Beans
+    - Broccoli
+    friendshipValues: 0200000002000000
+    veciniRai: []
+  - name: Cauliflower
+    veciniBuni:
+    - Beans
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Chives
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai:
+    - Beans
+  - name: Cilantro
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai: []
+  - name: Corn
+    veciniBuni:
+    - Beans
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Cucumber
+    veciniBuni:
+    - Beans
+    - Broccoli
+    friendshipValues: 0200000002000000
+    veciniRai: []
+  - name: Dill
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Garlic
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai:
+    - Beans
+  - name: Leeks
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Beans
+  - name: Lettuce
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Marigold
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai:
+    - Beans
+  - name: Melon
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai: []
+  - name: Nasturtium
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Onion
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai:
+    - Beans
+  - name: Oregano
+    veciniBuni:
+    - Basil
+    - Broccoli
+    friendshipValues: 0200000003000000
+    veciniRai: []
+  - name: Parsley
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai: []
+  - name: Peas
+    veciniBuni:
+    - Beans
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Peppers
+    veciniBuni:
+    - Basil
+    friendshipValues: 02000000
+    veciniRai:
+    - Beans
+    - Broccoli
+  - name: Rosemary
+    veciniBuni:
+    - Beans
+    - Broccoli
+    friendshipValues: 0200000002000000
+    veciniRai: []
+  - name: Sage
+    veciniBuni:
+    - Basil
+    - Beans
+    - Broccoli
+    friendshipValues: 010000000100000001000000
+    veciniRai: []
+  - name: Spinach
+    veciniBuni:
+    - Broccoli
+    friendshipValues: 02000000
+    veciniRai: []
+  - name: Squash
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai: []
+  - name: Strawberry
+    veciniBuni:
+    - Beans
+    friendshipValues: 02000000
+    veciniRai:
+    - Broccoli
+  - name: Sunflower
+    veciniBuni: []
+    friendshipValues: 
+    veciniRai: []
+  - name: Swiss Chard
+    veciniBuni:
+    - Beans
+    - Broccoli
+    friendshipValues: 0200000002000000
+    veciniRai: []
+  - name: Thyme
+    veciniBuni:
+    - Basil
+    - Beans
+    - Broccoli
+    friendshipValues: 010000000100000002000000
+    veciniRai: []
+  - name: Tomatoes
+    veciniBuni:
+    - Basil
+    - Beans
+    friendshipValues: 0200000002000000
+    veciniRai:
+    - Broccoli
   goodVList: []
   friendshipValues: 
   badVList: []
@@ -6805,7 +7039,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &841150859
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7123,7 +7357,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &874659112
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7743,7 +7977,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 3}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &931805069
 MonoBehaviour:
@@ -8781,9 +9015,9 @@ RectTransform:
   m_Father: {fileID: 2015505745}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_SizeDelta: {x: -17, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1014930203
 MonoBehaviour:
@@ -11796,9 +12030,9 @@ RectTransform:
   m_Father: {fileID: 1769570508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: 20}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1203828191
 MonoBehaviour:
@@ -15761,9 +15995,9 @@ RectTransform:
   m_Father: {fileID: 1769570508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1658561661
 MonoBehaviour:
@@ -16152,7 +16386,7 @@ RectTransform:
   m_Father: {fileID: 995031648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -17733,9 +17967,9 @@ RectTransform:
   m_Father: {fileID: 2015505745}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: -17}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1875341324
 MonoBehaviour:
@@ -17978,7 +18212,7 @@ RectTransform:
   m_Father: {fileID: 1037900593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -19276,7 +19510,7 @@ RectTransform:
   m_Father: {fileID: 287274552}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -19937,9 +20171,9 @@ RectTransform:
   m_Father: {fileID: 2015505745}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_SizeDelta: {x: 20, y: -17}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &2115457521
 MonoBehaviour:

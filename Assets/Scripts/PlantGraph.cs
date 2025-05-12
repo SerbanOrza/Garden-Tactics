@@ -227,7 +227,7 @@ public class PlantGraph : MonoBehaviour
             bestOrder=extractOrder();
         if(maxScore<0)
             scoreText.text="Imposibil, vor fi neaparat vecini rai";
-        scoreText.text="Legaturi bune: "+maxScore.ToString();
+        scoreText.text="Final score: "+maxScore.ToString();
         
         Debug.Log("Finished, Max Score: " + maxScore);
         isRunning=false;
